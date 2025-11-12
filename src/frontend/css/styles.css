@@ -1,0 +1,27 @@
+body {
+    width: 100%;
+}
+
+.material-icons {
+    font-size: 20px !important;
+    vertical-align: middle;
+    line-height: 1; 
+}
+
+.pcard-img {
+  width: 100%;
+  height: 200px; 
+  object-fit: cover;
+  object-position: center;
+}
+
+.carousel {
+    width: 100%;
+}
+
+.carousel-inner img{
+    filter: brightness(70%);
+    height: 400px; 
+    object-fit: cover;
+    object-position: center;
+}

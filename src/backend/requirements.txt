@@ -1,0 +1,4 @@
+dotenv
+flask
+flask-cors
+requests
