@@ -1,0 +1,6 @@
+.env
+src/backend/bin
+src/backend/include
+src/backend/lib
+src/backend/lib64
+src/backend/pyvenv.cfg
