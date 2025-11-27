@@ -1,7 +1,10 @@
 Tienda en Línea para UVM Hispano:
 
 TODO:
-    - Implementar página de producto, de carrito, de `mis compras` y de `sign-up`.
-    - Comenzar implementación en Flask.
+    - Implementar página de carrito, de `mis compras` y de `sign-up`.
+    - Comenzar implementación en Flask
     - Hacer archivos de SQL.
+    - Crear vistas:
+        - Para relación `productos-categorias`, de modo que al seleccionar una categoría se muestren todos sus productos.
+        - Para relación `compras-transacciones-productos`, de modo que para cada compra se muestren sus productos, así como la cantidad de cada uno.
     - Agregar apartado de Python para los tutoriales.

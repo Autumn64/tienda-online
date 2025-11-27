@@ -1,11 +1,45 @@
 if (localStorage.getItem("user")) window.location.href = "index.html";
 
-/*
-    Prueba para ver que el control de usuarios se esté haciendo adecuadamente.
-    Esto deberá reimplementarse usando la API.
-*/
+async function getUser(email, password){
+    try{
+        const response = await fetch("http://localhost:5000/api/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                "email": email,
+                "password": password
+            })
+        });
+
+        const result = await response.json()
+
+        console.log(result)
+
+        if (response.status != 200) throw new Error(result.message);
+
+        addMessage($(".container"), "success", `Bienvenid@, ${result.data['username']}`);
+        addMessage($(".container"), "info", `Eres usuario de tipo "${result.data['tipo']}"`);
+
+    }catch (error){
+        addMessage($(".container"), "error", error);
+    }
+    
+}
 
 $("#loginForm").on("submit", e => {
+    e.preventDefault();
+
+    $(".alert").remove();
+
+    const email = $("#loginEmail").val();
+    const password = $("#loginPassword").val();
+
+    getUser(email, password);
+});
+
+/*$("#loginForm").on("submit", e => {
     e.preventDefault();
 
     $(".alert").remove();
@@ -26,4 +60,4 @@ $("#loginForm").on("submit", e => {
     }
 
     setTimeout(() => window.location.href = "index.html", 500);
-});
+});*/
