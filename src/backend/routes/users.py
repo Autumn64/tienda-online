@@ -6,9 +6,18 @@ users = Blueprint("users", __name__)
 @users.route("/<user_id>", methods=["GET"])
 def get_user(user_id):
     db = Database()
-    query: str = "SELECT username, email, tipo, eliminado FROM usuarios WHERE id=%s"
 
-    user = db.selectOne(query, [user_id])
+    user = db.selectOne({
+        "table": "usuarios",
+        "columns": ["username", "email", "tipo", "eliminado"],
+        "condition": {
+            "operator": "=",
+            "column": "id",
+            "value": user_id
+        }
+    })
+
+    db.disconnect()
 
     if not user:
         return jsonify({
