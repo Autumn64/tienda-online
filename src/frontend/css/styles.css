@@ -25,3 +25,12 @@ body {
     object-fit: cover;
     object-position: center;
 }
+
+#loading-screen {
+    display: flex;
+    height: 100vh;
+}
+
+#main-container {
+    display: none;
+}

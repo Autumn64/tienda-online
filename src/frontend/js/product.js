@@ -1,3 +1,4 @@
+// Hace falta implementación con la API.
 templatesReady.then(() =>{
     for (let i = 1; i < 4; i++){
         addProductCard($("#recommendations"), `res/${i}.jpg`, `Producto ${i}`, `$${i * 176.5}`, "product.html");

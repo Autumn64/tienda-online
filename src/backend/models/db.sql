@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS tienda_online_test;
 USE tienda_online_test;
 
--- Tablas de usuarios
+-- Tabla de usuarios
 CREATE TABLE IF NOT EXISTS usuarios(
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(30),
@@ -11,17 +11,6 @@ CREATE TABLE IF NOT EXISTS usuarios(
     verificado BOOLEAN,
     eliminado BOOLEAN,
     fecha_creacion DATETIME
-);
-
-CREATE TABLE IF NOT EXISTS tokens(
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    usuario_id INTEGER NOT NULL,
-    
-    token VARCHAR(255),
-    fecha_creacion DATETIME,
-    fecha_expiracion DATETIME,
-    
-    CONSTRAINT FK_tokens_usuario_id FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 
 -- Manejo de productos
@@ -97,13 +86,3 @@ CREATE TABLE IF NOT EXISTS transacciones(
     CONSTRAINT FK_transacciones_producto_id FOREIGN KEY (producto_id) REFERENCES productos(id),
     CONSTRAINT FK_transacciones_compra_id FOREIGN KEY (compra_id) REFERENCES compras(id)
 );
-
-DELIMITER //
-CREATE TRIGGER IF NOT EXISTS borrar_tokens_usuarios BEFORE UPDATE ON usuarios
-FOR EACH ROW
-BEGIN
-    IF NEW.eliminado = TRUE THEN
-        DELETE FROM tokens WHERE id=NEW.id;
-    END IF;
-END; // 
-DELIMITER ;

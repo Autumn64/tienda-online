@@ -1,33 +1,49 @@
+const switchScreen = () =>{
+    // Animación que alterna entre la pantalla inicial de carga y la información ya desplegada.
+    // Esto se implementó debido al retraso provocado por la petición fetch.
+    $("#loading-screen").fadeOut("slow", () =>{
+        $("#main-container").fadeIn("slow");
+    });
+}
+
 const setInterface = user =>{
+    // Oculta el botón de login y agrega el menú del usuario.
     $("#loginBtn").hide();
     $("#accountDropdown").show();
 
-    if (user.username == "1"){
-        $("#adminMode").show();
-    }
+    if (user.type !== "admin") return;
+
+    // Si el usuario es administrador incluye la sección de administración de productos.
+    $("#adminMode").show();
+    
 }
 
 async function getSession(token){
+    // Hace la petición hacia el endpoint de los tokens, únicamente para verificar si el usuario
+    // inició sesión, en cuyo caso se adapta la interfaz de la página.
+
+    // Si no hay token no tiene sentido hacer ninguna petición
     if (!token) return null;
 
     try{
         const response = await fetch("http://localhost:5000/api/tokens", {
-            method: "POST",
+            method: "GET",
             headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                "token": token,
-            })
+                // El cliente debe enviar una cabecera de autorización con el formato
+                // `Authorization: Bearer TOKEN`.
+                "Authorization": `Bearer ${token}`
+            }
         });
 
         const result = await response.json();
 
-        if (response.status != 200) {
-            localStorage.removeItem("session");
-            sessionStorage.removeItem("session");
+        if (result.status !== "success"){
+            // Si el servidor responde negativamente ante el token, se elimina para que no
+            // se esté enviando a cada momento, ya que el resultado siempre sería el mismo.
+            window.tienda_session = null;
+            localStorage.removeItem("tienda-session");
             return;
-        };
+        }
 
         return result.data;
 
@@ -37,16 +53,27 @@ async function getSession(token){
 }
 
 $("#logoutBtn").on("click", () =>{
-    if (sessionStorage.getItem("session")) sessionStorage.removeItem("session");
+    // Elimina toda la información de la sesión y redirecciona a la página principal.
+    window.tienda_session = null;
+    localStorage.removeItem("tienda-session");
     window.location.href = "index.html";
 });
 
 $(async () =>{
-    if (localStorage.getItem("session")){
-        sessionStorage.setItem("session", localStorage.getItem("session"));
+    if (localStorage.getItem("tienda-session")){
+        // Si hay un token guardado, lo incluye en la sesión actual.
+        window.tienda_session = localStorage.getItem("tienda-session");
     }
 
-    const user = await getSession(sessionStorage.getItem("session"));
+    const user = await getSession(window.tienda_session);
 
-    if (user) setInterface(user);
+    switchScreen();
+
+    // Si no hay información del usuario no hace nada más.
+    if (!user) return;
+
+    // Si hay usuario, pero no está verificado, redirecciona a la pantalla de verificación.
+    if (!user.verificado) window.location.href = "verify.html";
+
+    setInterface(user);
 });

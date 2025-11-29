@@ -1,41 +1,48 @@
 import bcrypt, datetime
 from db import Database
-from interfaces import http_result, get_token_user
+from interfaces import http_result, decode_token
 from flask import Blueprint, request, jsonify
 
 tokens = Blueprint("tokens", __name__)
 
-@tokens.route("/", methods=["POST"])
+@tokens.route("/", methods=["GET"])
+# La ruta de este endpoint sería `/api/tokens/`.
 def validate_token():
-    data = request.get_json()
-    token = data.get("token")
+    auth = request.authorization
 
-    if not token:
-        return http_result(400, "fail", message="Se requiere especificar un token.")
+    if not auth:
+        # El cliente debe enviar una cabecera de autorización con el formato
+        # `Authorization: Bearer TOKEN`. Idealmente el cliente no enviaría petición alguna
+        # si no cuenta con el token, pero igual esta comprobación se agrega como medida de seguridad.
+        return http_result(400, message="Se requiere especificar un token.")
+
+    token_user = decode_token(auth.token)
+
+    if not token_user:
+        return http_result(404, message="Token inválido.")
 
     db = Database()
 
-    hash_tokens = db.selectAll({
-        "table": "tokens",
-        "columns": ["usuario_id", "token"],
-        "condition": {
-            "operator": ">",
-            "column": "fecha_expiracion",
-            "value": datetime.datetime.now()
-        }
+    user = db.selectOne({
+        "table": "usuarios",
+        "columns": ["username", "tipo", "verificado"],
+        "conditions": [
+            {
+            "prefix": "WHERE",
+            "operator": "=",
+            "column": "username",
+            "value": token_user["username"]
+            }
+        ]
     })
 
     db.disconnect()
 
-    if not hash_tokens: 
-        return http_result(404, "fail", message="Token no encontrado.")
+    if not user: 
+        return http_result(404, "fail", message="Token inválido.")
     
-    user = get_token_user(hash_tokens, token)
 
-    if not user:
-        return http_result(404, "fail", message="Token no encontrado.")
-
-    return http_result(200, "success", 
-        data={
-            "username": user
+    return http_result(200, data={
+        "type": user["tipo"],
+        "verificado": user["verificado"]
     })
