@@ -1,9 +1,11 @@
-import bcrypt
+import bcrypt, os
 from db import Database
-from interfaces import http_result, gen_token
+from emails import Email
 from flask import Blueprint, request, jsonify
+from interfaces import http_result, gen_token, gen_tfa_code
 
 auth = Blueprint("auth", __name__)
+tfaCodes = {}
 
 @auth.route("/login", methods=["POST"])
 # La ruta de este endpoint sería `/api/auth/login`.
@@ -49,8 +51,27 @@ def login():
 
     if not authCode:
         # Si no se incluyó el código de verificación en la petición, se genera uno y notifica al cliente.
+        tfaCode = gen_tfa_code()
+        tfaCodes[user["username"]] = tfaCode
+        mailServer = Email(
+            server=os.getenv("MAIL_SERVER"),
+            port=int(os.getenv("MAIL_PORT")),
+            user=os.getenv("MAIL_USER"),
+            password=os.getenv("MAIL_PASS")
+        )
+
+        mailServer.sendMessage(email, "Código 2FA Tienda Online", f"Tu código de verificación es {tfaCode}.", "text")
+        mailServer.quit()
         return http_result(202, message=f"Introduzca el código de verificación enviado a `{email}`.")
 
+    if authCode != tfaCodes[user["username"]]:
+        # Si el código generado y el código que introdujo el usuario no coinciden, se impide
+        # el inicio de sesión.
+        return http_result(401, message="Código de verificación incorrecto.")
+
+    # Limpia el token para que no se pueda reutilizar
+    del tfaCodes[user["username"]]
+    
     # Genera el token de sesión
     newToken: str = gen_token({"username": user["username"]})
 

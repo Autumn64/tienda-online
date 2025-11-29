@@ -1,5 +1,5 @@
-import datetime, jwt, os
 from flask import jsonify
+import datetime, jwt, os, pyotp
 
 SUCCESS_CODES = {200, 201, 202, 204}
 FAIL_CODES = {400, 401, 404, 405}
@@ -63,3 +63,8 @@ def decode_token(token: str) -> dict | None:
 
     except jwt.InvalidTokenError:
         return None
+    
+def gen_tfa_code() -> str:
+    # Revisar documentación de PyOTP en https://pyauth.github.io/pyotp/
+    totp = pyotp.TOTP('base32secret3232')
+    return totp.now()

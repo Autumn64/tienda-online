@@ -1,9 +1,9 @@
 // Si hay un token de sesión entonces no permite volver a visualizar la pantalla de login.
-if (window.tienda_session) window.location.href = "index.html";
+if (sessionStorage.getItem("tienda-session")) window.location.href = "index.html";
 
 function setSession(token){
     // Guarda el token en la sesión actual, y se pierde cuando el usuario cierra el navegador.
-    window.tienda_session = token;
+    sessionStorage.setItem("tienda-session", token)
 }
 
 function setPersistentSession(token){
@@ -34,27 +34,59 @@ async function tryLogin(email, password, authCode){
 
         if (result.status !== "success") throw new Error(result.message);
 
-        //if (result.code === 202) throw new Error(result.message);
+        // Retorna el resultado para comprobar que sí hubo respuesta, y para obtener
+        // el mensaje que se mostrará al usuario.
+        if (result.code === 202) return result;
 
         return result.data;
     }catch (error){
-        addMessage($(".container"), "error", error);
+        $("#loginSpinner").fadeOut("slow", () =>{
+            addMessage($(".container"), "error", error);
+        }); 
     }
     
+}
+
+async function tfaVerification(message, email, password){
+    // Genera mensaje con SweetAlert2
+    code = await Swal.fire({
+        title: "Verificación en dos pasos",
+        text: message,
+        icon: "warning",
+        input: 'text',
+        inputPlaceholder: "000000",
+        showCancelButton: true,
+    });
+
+    if (!code.isConfirmed) return null;
+    if(!code.value || code.value.trim() === "") return null;
+
+    // Vuelve a intentar el inicio de sesión, esta vez con el código.
+    return await tryLogin(email, password, code.value);
 }
 
 $("#loginForm").on("submit", async e => {
     e.preventDefault();
 
     $(".alert").remove();
+    $("#loginSpinner").fadeIn("slow");
 
     const email = $("#loginEmail").val();
     const password = $("#loginPassword").val();
     const rememberMe = $("#rememberMeCheck").is(":checked")
 
-    const user = await tryLogin(email, password);
-    if (!user) return;
-    
+    const response = await tryLogin(email, password);
+
+    // Si no hubo respuesta es porque el login fue incorrecto.
+    if (!response) return;
+
+    // Se vuelve a hacer la petición, ahora solicitando el código de verificación.
+    const user = await tfaVerification(response.message, email, password);
+
+    if (!user){
+        $("#loginSpinner").fadeOut("slow"); 
+    };
+
     // Si se llegó a este punto es porque el login fue correcto y ya se cuenta con
     // el token de sesión.
     setSession(user.token);

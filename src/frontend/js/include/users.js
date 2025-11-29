@@ -40,7 +40,7 @@ async function getSession(token){
         if (result.status !== "success"){
             // Si el servidor responde negativamente ante el token, se elimina para que no
             // se esté enviando a cada momento, ya que el resultado siempre sería el mismo.
-            window.tienda_session = null;
+            sessionStorage.removeItem("tienda-session");
             localStorage.removeItem("tienda-session");
             return;
         }
@@ -54,7 +54,7 @@ async function getSession(token){
 
 $("#logoutBtn").on("click", () =>{
     // Elimina toda la información de la sesión y redirecciona a la página principal.
-    window.tienda_session = null;
+    sessionStorage.removeItem("tienda-session")
     localStorage.removeItem("tienda-session");
     window.location.href = "index.html";
 });
@@ -62,10 +62,10 @@ $("#logoutBtn").on("click", () =>{
 $(async () =>{
     if (localStorage.getItem("tienda-session")){
         // Si hay un token guardado, lo incluye en la sesión actual.
-        window.tienda_session = localStorage.getItem("tienda-session");
+       sessionStorage.setItem("tienda-session", localStorage.getItem("tienda-session"));
     }
 
-    const user = await getSession(window.tienda_session);
+    const user = await getSession(sessionStorage.getItem("tienda-session"));
 
     switchScreen();
 
