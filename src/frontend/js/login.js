@@ -1,29 +1,96 @@
-if (localStorage.getItem("user")) window.location.href = "index.html";
+// Si hay un token de sesión entonces no permite volver a visualizar la pantalla de login.
+if (sessionStorage.getItem("tienda-session")) window.location.href = "index.html";
 
-/*
-    Prueba para ver que el control de usuarios se esté haciendo adecuadamente.
-    Esto deberá reimplementarse usando la API.
-*/
+function setSession(token){
+    // Guarda el token en la sesión actual, y se pierde cuando el usuario cierra el navegador.
+    sessionStorage.setItem("tienda-session", token)
+}
 
-$("#loginForm").on("submit", e => {
+function setPersistentSession(token){
+    // Guarda el token de manera persistente; se conserva hasta que éste expire.
+    localStorage.setItem("tienda-session", token);
+}
+
+async function tryLogin(email, password, authCode){
+    // Hace la petición a la API especificando el usuario y la contraseña introducida.
+    request = {
+        "email": email,
+        "password": password
+    }
+
+    // Si se introdujo el código de verificación en dos pasos, se incluye en la petición.
+    if (authCode) request.auth = authCode;
+
+    try{
+        const response = await fetch("http://localhost:5000/api/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(request)
+        });
+
+        const result = await response.json();
+
+        if (result.status !== "success") throw new Error(result.message);
+
+        // Retorna el resultado para comprobar que sí hubo respuesta, y para obtener
+        // el mensaje que se mostrará al usuario.
+        if (result.code === 202) return result;
+
+        return result.data;
+    }catch (error){
+        $("#loginSpinner").fadeOut("slow", () =>{
+            addMessage($(".container"), "error", error);
+        }); 
+    }
+    
+}
+
+async function tfaVerification(message, email, password){
+    // Genera mensaje con SweetAlert2
+    code = await Swal.fire({
+        title: "Verificación en dos pasos",
+        text: message,
+        icon: "warning",
+        input: 'text',
+        inputPlaceholder: "000000",
+        showCancelButton: true,
+    });
+
+    if (!code.isConfirmed) return null;
+    if(!code.value || code.value.trim() === "") return null;
+
+    // Vuelve a intentar el inicio de sesión, esta vez con el código.
+    return await tryLogin(email, password, code.value);
+}
+
+$("#loginForm").on("submit", async e => {
     e.preventDefault();
 
     $(".alert").remove();
-    
+    $("#loginSpinner").fadeIn("slow");
+
     const email = $("#loginEmail").val();
-    const password = $("#loginPass").val();
+    const password = $("#loginPassword").val();
+    const rememberMe = $("#rememberMeCheck").is(":checked")
 
-    
-    if (!["autumn64@disroot.org", "karymecg@gmail.com"].includes(email)){
-        addMessage($(".container"), "error", "Login incorrecto.");
-        return;
-    }
+    const response = await tryLogin(email, password);
 
-    if (email === "autumn64@disroot.org"){
-        localStorage.setItem("user", "admin");    
-    }else {
-        localStorage.setItem("user", "client");
-    }
+    // Si no hubo respuesta es porque el login fue incorrecto.
+    if (!response) return;
 
-    setTimeout(() => window.location.href = "index.html", 500);
+    // Se vuelve a hacer la petición, ahora solicitando el código de verificación.
+    const user = await tfaVerification(response.message, email, password);
+
+    if (!user){
+        $("#loginSpinner").fadeOut("slow"); 
+    };
+
+    // Si se llegó a este punto es porque el login fue correcto y ya se cuenta con
+    // el token de sesión.
+    setSession(user.token);
+    if (rememberMe) setPersistentSession(user.token);
+
+    window.location.href = "index.html";
 });

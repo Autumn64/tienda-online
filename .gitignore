@@ -4,3 +4,5 @@ src/backend/include
 src/backend/lib
 src/backend/lib64
 src/backend/pyvenv.cfg
+devel_data.sql
+__pycache__
