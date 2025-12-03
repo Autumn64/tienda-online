@@ -3,6 +3,7 @@ from flask import Flask
 from routes.users import users
 from routes.auth import auth
 from routes.tokens import tokens
+from routes.products import products
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -15,6 +16,7 @@ CORS(app)
 app.register_blueprint(auth, url_prefix="/api/auth")
 app.register_blueprint(users, url_prefix="/api/users")
 app.register_blueprint(tokens, url_prefix="/api/tokens")
+app.register_blueprint(products, url_prefix="/api/products")
 
 if __name__ == "__main__":
     dotenv.load_dotenv()
