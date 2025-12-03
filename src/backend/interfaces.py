@@ -2,7 +2,7 @@ from flask import jsonify
 import datetime, jwt, os, pyotp
 
 SUCCESS_CODES = {200, 201, 202, 204}
-FAIL_CODES = {400, 401, 404, 405}
+FAIL_CODES = {400, 401, 403, 404, 405}
 ERROR_CODES = {500}
 
 def get_status(code: int) -> str:
