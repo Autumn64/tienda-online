@@ -6,3 +6,4 @@ mysql-connector-python
 requests
 pyjwt
 pyotp
+Werkzeug

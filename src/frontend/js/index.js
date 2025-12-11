@@ -1,10 +1,10 @@
-// Evidentemente esto debe reimplementarse usando la API.
-templatesReady.then(() =>{
-    for (let i = 1; i < 6; i++){
-        addProductCard($("#mainContainer"), `res/${i}.jpg`, `Producto ${i}`, `$${i * 176.5}`, "product.html");
-    }
-
-    for (let i = 1; i < 6; i++){
-        addProductCard($("#mainContainer"), `res/${i}.jpg`, `Producto ${i+5}`, `$${i+5 * 76.2}`, "product.html");
-    }
+$(() =>{
+    fetch("http://localhost:5000/api/products")
+    .then(r => r.json())
+    .then(response =>{
+        for (element of response.data){
+            addProductCard($("#mainContainer"), `http://localhost:5000${element.imagen}`, 
+            element.nombre, `$${element.precio}`, `product.html?id=${element.id}`);
+        }
+    });
 });

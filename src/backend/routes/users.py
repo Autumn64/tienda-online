@@ -27,4 +27,4 @@ def get_user(user_id):
     if not user:
         return http_result(404, message="El usuario no existe.")
     
-    return http_result(404, data=user)
+    return http_result(200, data=user)

@@ -1,5 +1,10 @@
+// Obtiene los parámetros de login de la URL para sacar la página a la que debe
+// continuar después del login.
+const parameters = new URLSearchParams(window.location.search);
+const nextPage = parameters.has("next") ? parameters.get("next") : "index.html";
+
 // Si hay un token de sesión entonces no permite volver a visualizar la pantalla de login.
-if (sessionStorage.getItem("tienda-session")) window.location.href = "index.html";
+if (sessionStorage.getItem("tienda-session")) window.location.href = nextPage;
 
 function setSession(token){
     // Guarda el token en la sesión actual, y se pierde cuando el usuario cierra el navegador.
@@ -85,6 +90,7 @@ $("#loginForm").on("submit", async e => {
 
     if (!user){
         $("#loginSpinner").fadeOut("slow"); 
+        return;
     };
 
     // Si se llegó a este punto es porque el login fue correcto y ya se cuenta con
@@ -92,5 +98,5 @@ $("#loginForm").on("submit", async e => {
     setSession(user.token);
     if (rememberMe) setPersistentSession(user.token);
 
-    window.location.href = "index.html";
+    window.location.href = nextPage;
 });

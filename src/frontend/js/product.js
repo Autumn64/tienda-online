@@ -1,21 +1,39 @@
-// Hace falta implementación con la API.
-templatesReady.then(() =>{
-    for (let i = 1; i < 4; i++){
-        addProductCard($("#recommendations"), `res/${i}.jpg`, `Producto ${i}`, `$${i * 176.5}`, "product.html");
-    }
-});
-
 $(() =>{
-    $("#prodName").text("Playera");
-    $("#prodPrice").text("$" + Math.floor(Math.random() * 1000));
-    $("#prodStock").text("Cantidad en stock: " + Math.floor(Math.random() * 20));
-    $("#prodDescription").text(`Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+    const parameters = new URLSearchParams(window.location.search);
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+    if(!parameters.has("id") || isNaN(parameters.get("id")))
+        window.location.href = "index.html";
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+    // Cambia la URL del botón de login para que apunte a la página del producto actual.
+    $("#loginBtn a").attr("href", `login.html?next=product.html${encodeURIComponent(window.location.search)}`);
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.
+    // Petición GET a la API con el id del producto.
+    fetch(`http://localhost:5000/api/products/${parameters.get("id")}`)
+    .then(r => r.json())
+    .then(response =>{
+        if (response.status !== "success")
+            throw new Error(response.message);
 
-Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi pretium tellus duis convallis. Tempus leo eu aenean sed diam urna tempor. Pulvinar vivamus fringilla lacus nec metus bibendum egestas. Iaculis massa nisl malesuada lacinia integer nunc posuere. Ut hendrerit semper vel class aptent taciti sociosqu. Ad litora torquent per conubia nostra inceptos himenaeos.`);
+        // Actualiza los valores de cada parte de la página.
+        $("#prodName").text(response.data["nombre"]);
+        $("#prodPrice").text(response.data["precio"]);
+        $("#prodStock").text("Cantidad en stock: " + response.data["stock"]);
+        $("#prodDescription").html(response.data["descripcion"]);
+
+        // Cambia la cantidad máxima que se puede seleccionar para que no se pase del stock.
+        $("#prodQuantity").attr("max", response.data["stock"]);
+
+        // Agrega las imagenes al carrusel.
+        for (let i = 0; i < response.data["imagenes"].length; i++){
+            addCarouselImg($(".carousel-inner"), (i === 0), 
+            `http://localhost:5000${response.data["imagenes"][i]}`, 
+            `http://localhost:5000${response.data["imagenes"][i]}`);
+        }
+    })
+    .catch(error =>{
+        if (error.message === "No se encontró el producto seleccionado.")
+            window.location.href = "index.html";
+
+        addMessage($("header"), "error", error);
+    });
 });
