@@ -18,9 +18,9 @@ CREATE TABLE IF NOT EXISTS productos(
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     autor_id INTEGER NOT NULL,
     
-    nombre VARCHAR(30),
+    nombre VARCHAR(255),
     precio DECIMAL(7,2),
-    descripcion VARCHAR(255),
+    descripcion TEXT,
     stock INTEGER,
     fecha_creacion DATETIME,
     eliminado BOOLEAN,
@@ -86,3 +86,21 @@ CREATE TABLE IF NOT EXISTS transacciones(
     CONSTRAINT FK_transacciones_producto_id FOREIGN KEY (producto_id) REFERENCES productos(id),
     CONSTRAINT FK_transacciones_compra_id FOREIGN KEY (compra_id) REFERENCES compras(id)
 );
+
+-- Vista para las tarjetas de producto, que sólo recuperan la primera imagen.
+CREATE OR REPLACE VIEW tarjetas_productos AS
+SELECT 
+    p.id,
+    p.nombre,
+    p.precio,
+    i.ruta AS imagen
+FROM productos p
+LEFT JOIN imagenes i 
+    ON i.id = (
+        SELECT MIN(id)
+        FROM imagenes
+        WHERE producto_id = p.id
+    )
+WHERE 
+    p.stock > 0
+    AND p.eliminado = 0;

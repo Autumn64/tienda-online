@@ -1,10 +1,12 @@
 import os
 from db import Database
+from interfaces import http_result
 from flask import Blueprint, request, jsonify
 
 products = Blueprint("products", __name__)
 
 def auth_user(token: str) -> dict | None:
+    # Autenticación específicamente para las operaciones CUD.
     db = Database()
 
     user = db.selectOne({
@@ -27,15 +29,66 @@ def auth_user(token: str) -> dict | None:
 
     return user
 
+@products.route("/", methods=["GET"])
+def get_products():
+    # Despliega todos los productos disponibles.
+    db = Database()
+
+    products = db.selectAll({
+        "table": "tarjetas_productos",
+        "columns": ["*"]
+    })
+
+    db.disconnect()
+
+    if not products:
+        return http_result(404, message="No se encontraron productos.")
+
+    return http_result(200, data=products)
+
 @products.route("/<product_id>", methods=["GET"])
 def get_product(product_id):
+    # Despliega la información del producto seleccionado, junto con sus imágenes
     db = Database()
-    # Aquí se hace la consulta SQL con `selectOne()` y usando la variable `product_id`
-    # La consulta debe hacerse sobre la vista `categorias-productos` usando el ID del producto.
 
+    product = db.selectOne({
+        "table": "productos",
+        "columns": ["nombre", "precio", "descripcion", "stock"],
+        "conditions": [
+            {
+            "prefix": "WHERE",
+            "operator": "=",
+            "column": "id",
+            "value": product_id
+            }
+        ]
+    })
 
-    # Aquí se hace la respuesta, si el resultado de la consulta es None
-    # responde con estatus 404, de lo contrario responde con estatus 200.
+    if not product:
+        db.disconnect()
+        return http_result(404, message="No se encontró el producto seleccionado.")
+    
+    images = db.selectAll({
+        "table": "imagenes",
+        "columns": ["ruta"],
+        "conditions": [
+            {
+            "prefix": "WHERE",
+            "operator": "=",
+            "column": "producto_id",
+            "value": product_id
+            }
+        ]
+    })
+
+    db.disconnect()
+
+    product["imagenes"] = []
+
+    for element in images:
+        product["imagenes"].append(element["ruta"])
+
+    return http_result(200, data=product)
 
 @products.route("/<product_id>", methods=["POST"])
 def create_product(product_id):

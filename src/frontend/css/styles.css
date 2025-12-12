@@ -8,6 +8,17 @@ body {
     line-height: 1; 
 }
 
+.pcard .card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pcard-btn {
+    margin-top: auto;
+    align-self: center;
+}
+
 .pcard-img {
   width: 100%;
   height: 200px; 

@@ -31,6 +31,18 @@ const getNewTemplate = (id, container) =>{
     return $($template.prop("content")).clone(true).find(container);
 }
 
+const addCarouselImg = ($parent, active, picture, link) =>{
+    const $carouselImgTemplate = getNewTemplate("#carouselImg-template", "div");
+
+    if (active)
+        $carouselImgTemplate.addClass("active");
+    
+    $carouselImgTemplate.find("img").attr("src", picture);
+    $carouselImgTemplate.find("a").attr("href", link);
+
+    $parent.append($carouselImgTemplate);
+}
+
 const addMessage = ($parent, type, message) =>{
     // Si se pone un tipo de mensaje que no sea `error`, `success` o `info`, tira una excepción.
     if (!["error", "success", "info"].includes(type)) throw new Error("addMessage() only accepts 'error', 'success' and 'info' as values for argument `type`.");
