@@ -14,7 +14,7 @@ def auth_user(token: str) -> dict | None:
 
     user = db.selectOne({
         "table": "usuarios",
-        "columns": ["id", "tipo"],
+        "columns": ["id"],
         "conditions": [
             {
             "prefix": "WHERE",
@@ -32,7 +32,7 @@ def auth_user(token: str) -> dict | None:
 def to_stripe_amount(value: Decimal) -> int:
     return int((value * 100).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
 
-def get_line_items(products):
+def get_line_items(products, user):
     line_items: list = []
     db = Database()
     
@@ -67,7 +67,8 @@ def get_line_items(products):
                 "product_data": {
                     "name": newProduct["nombre"],
                     "metadata": {
-                        "product_id": element["id"]
+                        "product_id": element["id"],
+                        "user_id": user
                     }
                 }
             },
@@ -81,6 +82,9 @@ def get_line_items(products):
 
 @checkout.route("/", methods=["POST"])
 def create_checkout_session():
+    if not request.is_json:
+        return http_result(400, message="Sólo se acepta información en formato JSON.")
+
     auth = request.authorization
 
     if not auth:
@@ -96,12 +100,9 @@ def create_checkout_session():
     if not user:
         return http_result(401, message="Sólo los usuarios autenticados pueden hacer compras.")
 
-    if not request.is_json:
-        return http_result(400, message="Sólo se acepta información en formato JSON.")
-
     data = request.json
 
-    line_items: list = get_line_items(data["cart"].values())
+    line_items: list = get_line_items(data["cart"].values(), user["id"])
 
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],

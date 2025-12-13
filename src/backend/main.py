@@ -5,6 +5,7 @@ from routes.users import users
 from routes.tokens import tokens
 from routes.checkout import checkout
 from routes.products import products
+from routes.webhooks import webhooks
 from werkzeug.utils import safe_join
 from flask import Flask, send_from_directory, abort
 
@@ -24,6 +25,7 @@ app.register_blueprint(users, url_prefix="/api/users")
 app.register_blueprint(tokens, url_prefix="/api/tokens")
 app.register_blueprint(checkout, url_prefix="/api/checkout")
 app.register_blueprint(products, url_prefix="/api/products")
+app.register_blueprint(webhooks, url_prefix="/api/webhooks")
 
 @app.route("/static/<path:subpath>")
 def serveStatic(subpath):
