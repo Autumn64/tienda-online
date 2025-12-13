@@ -56,6 +56,8 @@ $("#logoutBtn").on("click", () =>{
     // Elimina toda la información de la sesión y redirecciona a la página principal.
     sessionStorage.removeItem("tienda-session")
     localStorage.removeItem("tienda-session");
+    localStorage.removeItem("tienda-cart");
+    delete window.isAdmin;
     window.location.href = "index.html";
 });
 
@@ -74,6 +76,8 @@ $(async () =>{
 
     // Si hay usuario, pero no está verificado, redirecciona a la pantalla de verificación.
     if (!user.verificado) window.location.href = "verify.html";
+
+    sessionStorage.setItem("tienda-usertype", user.type);
 
     setInterface(user);
 });

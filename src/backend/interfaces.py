@@ -1,5 +1,5 @@
 from flask import jsonify
-import datetime, jwt, os, pyotp
+import datetime, jwt, os, pyotp, uuid
 
 SUCCESS_CODES = {200, 201, 202, 204}
 FAIL_CODES = {400, 401, 403, 404, 405}
@@ -44,11 +44,14 @@ def http_result(code: int, data: dict = None, message: str = None):
 
     return jsonify(result), code
 
+def gen_uuid() -> str:
+    return uuid.uuid4()
+
 def gen_token(data: dict, expiration: datetime.date = None) -> str:
     # Genera un token JWT para autenticación, si no se especifica el tiempo de expiración se le
     # asigna un tiempo predeterminado.
     if expiration is None:
-        expiration = datetime.datetime.utcnow() + datetime.timedelta(minutes=5)
+        expiration = datetime.datetime.utcnow() + datetime.timedelta(weeks=1)
     data["exp"] = expiration
     token = jwt.encode(data, os.getenv("JWT_KEY"), algorithm="HS256")
     return token

@@ -1,9 +1,38 @@
-import os
+import os, datetime
 from db import Database
-from interfaces import http_result
+from werkzeug.utils import secure_filename
 from flask import Blueprint, request, jsonify
+from interfaces import http_result, gen_uuid, decode_token
 
 products = Blueprint("products", __name__)
+
+# Carpetas de los archivos estáticos.
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_FOLDER = os.path.join(BASE_DIR, "static", "product_imgs")
+PICS_FOLDER = os.path.join("/static", "product_imgs")
+
+# Extensiones de archivo permitidas para las imágenes.
+ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
+
+def allowed_file(filename):
+    # Verifica la extensión del archivo.
+    return (
+        "." in filename and
+        filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
+
+def verify_images(pictures: list) -> str | None:
+    for file in pictures:
+        if not allowed_file(file.filename):
+            return "Se debe incluir al menos una imagen. Sólo se permiten archivos con extensiones `.jpg`, `.png` y `.webp`."
+        
+        file_length = file.seek(0, 2)
+        file.seek(0, 0)
+        # Límite de 2 MiB.
+        if file_length > 2097152: 
+            return f"La imagen es demasiado grande. {file_length/1048576:.2f} MiB > 2 MiB."
+
+    return None
 
 def auth_user(token: str) -> dict | None:
     # Autenticación específicamente para las operaciones CUD.
@@ -11,13 +40,13 @@ def auth_user(token: str) -> dict | None:
 
     user = db.selectOne({
         "table": "usuarios",
-        "columns": ["username", "tipo"],
+        "columns": ["id", "tipo"],
         "conditions": [
             {
             "prefix": "WHERE",
             "operator": "=",
             "column": "username",
-            "value": token_user["username"]
+            "value": token["username"]
             }
         ]
     })
@@ -90,8 +119,9 @@ def get_product(product_id):
 
     return http_result(200, data=product)
 
-@products.route("/<product_id>", methods=["POST"])
-def create_product(product_id):
+@products.route("/", methods=["POST"])
+def create_product():
+    # Crea un producto nuevo
     auth = request.authorization
 
     if not auth:
@@ -107,12 +137,44 @@ def create_product(product_id):
     if not user:
         return http_result(403, message="No tienes permiso para acceder a este recurso.")
 
+    nombre = request.form.get("productName")
+    descripcion = request.form.get("productDescription")
+    precio = request.form.get("productPrice")
+    stock = request.form.get("productStock")
+
+    if "" in [nombre, descripcion, precio, stock]:
+        return http_result(400, message="Debes llenar todos los campos.")
+
+    imagenes: list = request.files.getlist("productPics")
+    message: str | None = verify_images(imagenes)
+
+    if message is not None:
+        return http_result(400, message=message)
+
     db = Database()
 
-    # Aquí se hace una consulta SELECT para verificar si el producto ya existe.
+    newId = db.insertOne({
+        "table": "productos",
+        "columns": ["autor_id", "nombre", "descripcion", "precio", "stock", "fecha_creacion", "eliminado"],
+        "values": [user["id"], nombre, descripcion, precio, stock, datetime.datetime.now(), False]
+    })
 
-    # Si el producto ya existe, el servidor debe responder con estatus 400.
+    for file in imagenes:
+        # Guarda cada imagen en su ruta y la agrega a la base de datos.
+        file_uuid: str = gen_uuid()
+        # Nombre de archivo: <UUID>.ext
+        filename = f"{file_uuid}.{file.filename.rsplit('.', 1)[1].lower()}"
 
-    # Aquí se hace la consulta INSERT, mediante `insertOne()`.
+        folderName: str = os.path.join(STATIC_FOLDER, str(newId))
+        os.makedirs(folderName, exist_ok=True)
+        file.save(os.path.join(folderName, filename))
 
-    # Aquí se hace la respuesta del servidor (estatus 201).
+        folderName = os.path.join(PICS_FOLDER, str(newId))
+
+        db.insertOne({
+            "table": "imagenes",
+            "columns": ["producto_id", "ruta"],
+            "values": [newId, os.path.join(folderName, filename)]
+        })
+    
+    return http_result(201, message="Producto creado exitosamente.")

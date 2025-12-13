@@ -31,6 +31,22 @@ const getNewTemplate = (id, container) =>{
     return $($template.prop("content")).clone(true).find(container);
 }
 
+const addCartProduct = ($parent, id, picture, prodName, max, qty, price) =>{
+    const $cartProductTemplate = getNewTemplate("#cartProduct-template", ".cartProductRow");
+
+    $cartProductTemplate.attr("data-cart-id", id);
+    $cartProductTemplate.find(".imgCol").find("img").attr("src", picture);
+    $cartProductTemplate.find(".nameCol").text(prodName);
+    $cartProductTemplate.find(".uProdPrice").text(price);
+    $cartProductTemplate.find(".qtyCol").find("input").attr("max", max);
+    $cartProductTemplate.find(".qtyCol").find("input").attr("value", qty);
+    $cartProductTemplate.find(".qtyCol").find("input").attr("data-cart-id", id);
+    $cartProductTemplate.find(".totalProdPrice").text(qty * Number.parseFloat(price));
+    $cartProductTemplate.find(".rmCol").find("button").attr("data-cart-id", id);
+
+    $parent.append($cartProductTemplate);
+}
+
 const addCarouselImg = ($parent, active, picture, link) =>{
     const $carouselImgTemplate = getNewTemplate("#carouselImg-template", "div");
 

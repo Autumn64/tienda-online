@@ -3,18 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tienda en línea - Login</title>
+    <title>Tienda en línea - Página de producto</title>
     <link href="css/styles.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="css/cart.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script defer src="js/include/jquery-3.7.1.min.js"></script>
     <script defer src="js/include/templates.js"></script>
     <script defer src="js/include/users.js"></script>
-    <script defer src="js/login.js"></script>
+    <script defer src="js/cart.js"></script>
 </head>
 <body>
+    <div id="loading-screen" class="container-fluid justify-content-center align-items-center">
+        <div class="spinner-border text-primary my-auto mx-auto" style="width: 60px; height: 60px;" role="status">
+        <span class="visually-hidden">Cargando...</span>
+        </div>
+    </div>
+    <div id="main-container">
     <header>
     <nav class="navbar navbar-expand-sm bg-body-tertiary" data-bs-theme="light">
     <div class="container-fluid">
@@ -31,7 +38,7 @@
             <a class="nav-link" href="#">Categorías</a>
             </li>
             <li class="nav-item" id="adminMode" style="display: none;">
-            <a class="nav-link" href="admin.html">Administrar productos</a>
+            <a class="nav-link" href="#">Administrar productos</a>
             </li>
         </ul>
         <ul class="navbar-nav mb-3 mb-sm-0">
@@ -40,45 +47,31 @@
                 Mi cuenta
             </a>
             <ul class="dropdown-menu dropdown-menu-sm-end text-center">
-                <li><a class="dropdown-item" href="cart.html"><i class="material-icons">shopping_cart</i> Carrito</a></li>
+                <li><a class="dropdown-item" href="#"><i class="material-icons">shopping_cart</i> Carrito</a></li>
                 <li><a class="dropdown-item" href="#"><i class="material-icons">shopping_bag</i> Mis compras</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" id="logoutBtn" href="#"><i class="material-icons">logout</i> Salir</a></li>
             </ul>
             </li>
             <li class="nav-item" id="loginBtn">
-                 <a href="login.html" class="btn btn-outline-primary my-3 my-sm-0">Iniciar sesión</a>
+                 <a class="btn btn-outline-primary my-3 my-sm-0">Iniciar sesión</a>
             </li>
         </ul>
         </div>
     </div>
     </nav>
     </header>
-
-    <main class="container my-5 justify-content-center" style="max-width: 500px;">
-        <form class="my-5" id="loginForm">
-        <div class="mb-3">
-            <label for="loginEmail" class="form-label">Correo electrónico</label>
-            <input type="email" class="form-control" id="loginEmail" placeholder="correo@ejemplo.com" required>
-        </div>
-        <div class="mb-3">
-            <label for="loginPassword" class="form-label">Contraseña</label>
-            <input type="password" class="form-control" id="loginPassword" placeholder="contraseña" required>
-        </div>
-        <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="rememberMeCheck">
-            <label class="form-check-label" for="rememberMeCheck">Recuérdame</label>
-        </div>
-        <div class="container-fluid text-center">
-            <button type="submit" class="btn btn-primary">Iniciar sesión</button>
-        </div>
-        </form>
-        <div id="loginSpinner" class="container-fluid text-center" style="display: none;">
-            <div class="spinner-border text-primary my-auto mx-auto" style="width: 50px; height: 50px;" role="status">
-            <span class="visually-hidden">Cargando...</span>
-            </div>
-        </div>
-        
-    </main>
+    <div class="container mt-2 p-3 p-md-5 text-start">
+        <a id="backBtn" class="h4"><i class="material-icons">arrow_back_ios</i>Volver</a>
+    </div>
+    <section class="container mb-5 p-3 p-md-5 text-center" id="errorsContainer" style="display: none;"></section>
+    <section class="container mb-5 p-3 p-md-5 border-bottom border-2 text-center" id="bodyContainer">
+        <h1 class="h1">Carrito de compras</h1>
+        <section class="container my-2 p-3 p-md-5" id="cartContainer">
+        </section>
+        <h3 class="h3 mb-5" id="totalPrice"></h3> 
+        <button class="btn btn-primary" id="purchaseBtn">Finalizar compra</button>
+    </section>
+    </div>
 </body>
 </html>
