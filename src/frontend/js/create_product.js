@@ -7,7 +7,7 @@ $("#productForm").on("submit", e =>{
     const description = $("#productDescription").val();
     formData.set("productDescription", description.replace(/\r?\n/g, "<br>"));
 
-    fetch("http://localhost:5000/api/products/", {
+    fetch("https://storeapi.autumn64.xyz/api/products/", {
         method: "POST",
         headers: {
             "Authorization": `Bearer ${sessionStorage.getItem("tienda-session")}`

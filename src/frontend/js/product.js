@@ -76,7 +76,7 @@ $(() =>{
     $("#loginBtn a").attr("href", `login.html?next=product.html${encodeURIComponent(window.location.search)}`);
 
     // Petición GET a la API con el id del producto.
-    fetch(`http://localhost:5000/api/products/${parameters.get("id")}`)
+    fetch(`https://storeapi.autumn64.xyz/api/products/${parameters.get("id")}`)
     .then(r => r.json())
     .then(response =>{
         if (response.status !== "success")
@@ -94,8 +94,8 @@ $(() =>{
         // Agrega las imagenes al carrusel.
         for (let i = 0; i < response.data["imagenes"].length; i++){
             addCarouselImg($(".carousel-inner"), (i === 0), 
-            `http://localhost:5000${response.data["imagenes"][i]}`, 
-            `http://localhost:5000${response.data["imagenes"][i]}`);
+            `https://storeapi.autumn64.xyz${response.data["imagenes"][i]}`, 
+            `https://storeapi.autumn64.xyz${response.data["imagenes"][i]}`);
         }
 
         prodStock = response.data["stock"];

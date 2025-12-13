@@ -68,12 +68,12 @@ async function addProduct(id, quantity){
         Hace la petición a la API para obtener la información de cada producto,
         y lo inserta en la página.
     */
-    r = await fetch(`http://localhost:5000/api/products/${id}`);
+    r = await fetch(`https://storeapi.autumn64.xyz/api/products/${id}`);
     response = await r.json();
     addCartProduct(
         $("#cartContainer"), 
         id,
-        `http://localhost:5000${response.data["imagenes"][0]}`,
+        `https://storeapi.autumn64.xyz${response.data["imagenes"][0]}`,
         response.data["nombre"],
         response.data["stock"],
         quantity,
@@ -84,13 +84,16 @@ async function addProduct(id, quantity){
 function buyCart(e){
     e.preventDefault();
 
-    fetch("http://localhost:5000/api/checkout", {
+    fetch("https://storeapi.autumn64.xyz/api/checkout/", {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${sessionStorage.getItem("tienda-session")}`
         },
-        body: localStorage.getItem("tienda-cart")
+        body: JSON.stringify({
+            "cart": JSON.parse(localStorage.getItem("tienda-cart")),
+            "backurl": "http://localhost/tienda-online/cart.html"
+        })
     })
     .then(r => r.json())
     .then(response =>{

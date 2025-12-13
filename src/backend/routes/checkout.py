@@ -101,14 +101,14 @@ def create_checkout_session():
 
     data = request.json
 
-    line_items: list = get_line_items(data.values())
+    line_items: list = get_line_items(data["cart"].values())
 
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         mode="payment",
         line_items=line_items,
         success_url="http://localhost/tienda-online",
-        cancel_url="http://localhost/tienda-online/cart.html"
+        cancel_url=data["backurl"]
     )
 
     return http_result(202, data={

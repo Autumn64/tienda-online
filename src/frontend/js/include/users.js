@@ -26,7 +26,7 @@ async function getSession(token){
     if (!token) return null;
 
     try{
-        const response = await fetch("http://localhost:5000/api/tokens", {
+        const response = await fetch("https://storeapi.autumn64.xyz/api/tokens/", {
             method: "GET",
             headers: {
                 // El cliente debe enviar una cabecera de autorización con el formato
