@@ -3,6 +3,7 @@ from flask_cors import CORS
 from routes.auth import auth
 from routes.users import users
 from routes.tokens import tokens
+from routes.checkout import checkout
 from routes.products import products
 from werkzeug.utils import safe_join
 from flask import Flask, send_from_directory, abort
@@ -21,6 +22,7 @@ CORS(app)
 app.register_blueprint(auth, url_prefix="/api/auth")
 app.register_blueprint(users, url_prefix="/api/users")
 app.register_blueprint(tokens, url_prefix="/api/tokens")
+app.register_blueprint(checkout, url_prefix="/api/checkout")
 app.register_blueprint(products, url_prefix="/api/products")
 
 @app.route("/static/<path:subpath>")

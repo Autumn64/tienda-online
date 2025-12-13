@@ -81,6 +81,32 @@ async function addProduct(id, quantity){
     );
 }
 
+function buyCart(e){
+    e.preventDefault();
+
+    fetch("http://localhost:5000/api/checkout", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${sessionStorage.getItem("tienda-session")}`
+        },
+        body: localStorage.getItem("tienda-cart")
+    })
+    .then(r => r.json())
+    .then(response =>{
+        if (response.status !== "success") throw new Error(response.message);
+
+        window.location.href = response.data["url"];
+    })
+    .catch(error =>{
+        Swal.fire({
+            title: "Error al realizar la compra",
+            text: error,
+            icon: "error",
+        });
+    });
+}
+
 $("#backBtn").on("click", e =>{
     e.preventDefault();
     history.back();
@@ -108,4 +134,6 @@ templatesReady.then(async () =>{
     $(".qtyCol").find("input").on("change", changeProdQty);
     // Botones de eliminar producto.
     $(".rmCol").find(".btn").on("click", removeProduct);
+
+    $("#purchaseBtn").on("click", buyCart);
 });

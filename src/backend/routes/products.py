@@ -125,12 +125,12 @@ def create_product():
     auth = request.authorization
 
     if not auth:
-        return http_result(400, message="Se requiere especificar un token.")
+        return http_result(401, message="Se requiere especificar un token.")
 
     token_user = decode_token(auth.token)
 
     if not token_user:
-        return http_result(404, message="Token inválido.")
+        return http_result(401, message="Token inválido.")
 
     user = auth_user(token_user)
 
