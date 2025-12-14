@@ -73,6 +73,7 @@ async function tfaVerification(message, email, password){
 $("#loginForm").on("submit", async e => {
     e.preventDefault();
 
+    $("#loginForm button").prop("disabled", true);
     $(".alert").remove();
     $("#loginSpinner").fadeIn("slow");
 
@@ -81,6 +82,8 @@ $("#loginForm").on("submit", async e => {
     const rememberMe = $("#rememberMeCheck").is(":checked")
 
     const response = await tryLogin(email, password);
+
+    $("#loginForm button").prop("disabled", false);
 
     // Si no hubo respuesta es porque el login fue incorrecto.
     if (!response) return;

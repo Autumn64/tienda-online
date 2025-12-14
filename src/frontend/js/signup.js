@@ -32,6 +32,7 @@ function trySignup(username, email, password){
         showMessage("Éxito en el registro", response.message, "success", () => window.location.href = "login.html");
     })
     .catch(error =>{
+        $("#signupForm button").prop("disabled", false);
         $("#loginSpinner").fadeOut("slow");
         showMessage("Error en el registro", error, "error", null);
     });
@@ -41,6 +42,7 @@ function trySignup(username, email, password){
 $("#signupForm").on("submit", async e => {
     e.preventDefault();
 
+    $("#signupForm button").prop("disabled", true);
     $(".alert").remove();
 
     const username = $("#signupUser").val();  
@@ -49,6 +51,7 @@ $("#signupForm").on("submit", async e => {
     const password2 = $("#signupPassword2").val();
 
     if (password !== password2){
+        $("#signupForm button").prop("disabled", false);
         showMessage("Error en el registro", "Las contraseñas no coinciden", "error", null);
         return;
     }

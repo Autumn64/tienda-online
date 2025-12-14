@@ -60,7 +60,7 @@ def login():
             password=os.getenv("MAIL_PASS")
         )
 
-        mailServer.sendMessage(email, "Código 2FA Tienda Online", f"Tu código de verificación es {tfaCode}.", "text")
+        mailServer.sendMessage(email, "Código 2FA Tienda Online", f"Tu código de verificación es {tfaCode}.", "html")
         mailServer.quit()
         return http_result(202, message=f"Introduce el código de verificación enviado a `{email}`.")
 
@@ -140,7 +140,7 @@ def singup():
         password=os.getenv("MAIL_PASS")
     )
 
-    mailServer.sendMessage(email, "Bienvenida Tienda Online", f"Te damos la bienvenida a Tienda Online UVM.", "text")
+    mailServer.sendMessage(email, "Bienvenida Tienda Online", f"Te damos la bienvenida a Tienda Online UVM.", "html")
     mailServer.quit()
 
     return http_result(201, message="Registro completado exitosamente. Ahora puede iniciar sesión.")

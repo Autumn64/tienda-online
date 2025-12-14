@@ -46,9 +46,35 @@ body {
     display: none;
 }
 
+#theme-toggle svg{
+    max-height: 40px;
+    fill: var(--fg-color-1);
+}
+
+#theme-toggle svg:last-child {
+    display: none;
+}
+
+
 @media screen and (width <= 750px){
     .carousel-inner img{
         height: auto;
         object-fit: contain;
     }
+}
+
+:root {
+    --fg-color-1: #151515;
+}
+
+:root[data-bs-theme="dark"]{
+    --fg-color-1: #ebebeb;
+}
+
+:root[data-bs-theme="dark"] #theme-toggle svg:first-child{
+    display: none;
+}
+
+:root[data-bs-theme="dark"] #theme-toggle svg:last-child{
+    display: inline;
 }

@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS tienda_online_test;
+DROP DATABASE IF EXISTS tienda_online;
 
-CREATE DATABASE IF NOT EXISTS tienda_online_test;
-USE tienda_online_test;
+CREATE DATABASE IF NOT EXISTS tienda_online;
+USE tienda_online;
 
 -- Tabla de usuarios
 CREATE TABLE IF NOT EXISTS usuarios(
@@ -79,6 +79,7 @@ WHERE
     p.stock > 0
     AND p.eliminado = 0;
 
+-- Vista para mostrar una compra con todos sus productos y cantidades.
 CREATE OR REPLACE VIEW productos_compras AS
 SELECT
     t.compra_id,
