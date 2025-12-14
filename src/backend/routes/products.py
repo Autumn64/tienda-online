@@ -225,12 +225,14 @@ def delete_product(product_id):
         "table": "productos",
         "columns": ["eliminado"],
         "values": [True],
-        "conditions": {
+        "conditions": [
+            {
             "prefix": "WHERE",
             "operator": "=",
             "column": "id",
             "value": product_id
-        }
+            }
+        ]
     })
 
     return http_result(200, message=f"Se eliminó {rows} producto(s).")
