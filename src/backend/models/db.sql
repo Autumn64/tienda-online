@@ -1,3 +1,5 @@
+DROP DATABASE IF EXISTS tienda_online_test;
+
 CREATE DATABASE IF NOT EXISTS tienda_online_test;
 USE tienda_online_test;
 
@@ -67,7 +69,7 @@ CREATE TABLE IF NOT EXISTS productos_categorias(
 
 -- Transacciones y compras
 CREATE TABLE IF NOT EXISTS compras(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
     usuario_id INTEGER NOT NULL,
     
     monto DECIMAL(10,2),
@@ -77,7 +79,7 @@ CREATE TABLE IF NOT EXISTS compras(
 );
 
 CREATE TABLE IF NOT EXISTS transacciones(
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
     producto_id INTEGER NOT NULL,
     compra_id INTEGER NOT NULL,
     

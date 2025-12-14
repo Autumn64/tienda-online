@@ -62,7 +62,7 @@ def login():
 
         mailServer.sendMessage(email, "Código 2FA Tienda Online", f"Tu código de verificación es {tfaCode}.", "text")
         mailServer.quit()
-        return http_result(202, message=f"Introduzca el código de verificación enviado a `{email}`.")
+        return http_result(202, message=f"Introduce el código de verificación enviado a `{email}`.")
 
     if authCode != tfaCodes[user["username"]]:
         # Si el código generado y el código que introdujo el usuario no coinciden, se impide

@@ -7,3 +7,5 @@ requests
 pyjwt
 pyotp
 Werkzeug
+stripe
+waitress

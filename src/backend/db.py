@@ -70,7 +70,7 @@ class Database():
 
     def prepareStatementSelect(self, parameters: dict) -> (str, list):
         # Genera la sintaxis SQL adecuada para una consulta de tipo SELECT. Los parámetros
-        # requeridos para este tipo de consultas son `table`, `columns`, y opcionalmente `conditions`.
+        # requeridos para este tipo de consultas son `table`, `columns` y opcionalmente `conditions`.
         # Un ejemplo de consulta válida es el siguiente:
         # {
         #     "table": "usuarios",
@@ -121,7 +121,7 @@ class Database():
         # Lo cual produciría exactamente la siguiente consulta en sintaxis SQL:
         # INSERT INTO tokens (username_id, fecha_creacion, fecha_expiracion)
         # VALUES (5, 2025-10-11 07:32:55, 2025-11-11 07:32:35);
-        # `statement` representa las variables que se van a procesar en la consulta.
+        # `values` representa las variables que se van a procesar en la consulta.
 
         if len(parameters["columns"]) != len(parameters["values"]):
             # Si el número de columnas y de valores no coincide, lanza una excepción
@@ -136,14 +136,95 @@ class Database():
         for _ in values:
             query +="%s, "
         
-        # Elimina el `, ` del; final y agrega el último paréntesis.
+        # Elimina el `, ` del final y agrega el último paréntesis.
         query = query[:-2] + ")"
 
         return query, values
+    
+    def prepareStatementUpdate(self, parameters: dict) -> (str, list):
+        # Genera la sintaxis SQL adecuada para una consulta de tipo UPDATE. Los parámetros
+        # requeridos para este tipo de consultas son `table`, `columns`, `values` y opcionalmente `conditions`.
+        # Un ejemplo de consulta válida es el siguiente:
+        # {
+        #     "table": "usuarios",
+        #     "columns": ["passwd"],
+        #     "values": ["newPassword"]
+        #     "conditions": [
+        #         {
+        #             "prefix": "WHERE",
+        #             "operator": "=",
+        #             "column": "email",
+        #             "value": "ejemplo@correo.com"
+        #         }
+        #     ]
+        # }
+        # Lo cual produciría exactamente la siguiente consulta en sintaxis SQL:
+        # UPDATE usuarios SET passwd = newPassword WHERE email = ejemplo@correo.com;
+        # `statement` representa las variables que se van a procesar en la consulta.
+        if len(parameters["columns"]) != len(parameters["values"]):
+            # Si el número de columnas y de valores no coincide, lanza una excepción
+            raise Exception("Number of columns and values doesn't coincide")
+        
+        table = parameters["table"]
+        columns = parameters["columns"]
+        values = parameters["values"]
+
+        statement = []
+        query: str = f"UPDATE {table} SET "
+
+        for i in range(len(columns)):
+            query += f"{columns[i]} = %s, "
+            statement.append(values[i])
+        
+        # Elimina el `, ` del final.
+        query = query[:-2]
+
+        if not "conditions" in parameters:
+            return query, statement
+
+        conditions, condStmt = self.parseParameters(parameters["conditions"])
+
+        query += conditions
+
+        statement.extend(condStmt)
+        
+        return query, statement
+
+    def prepareStatementDelete(self, parameters: dict) -> (str, list):
+        # Genera la sintaxis SQL adecuada para una consulta de tipo DELETE. Los parámetros
+        # requeridos para este tipo de consultas son `table` y opcionalmente `conditions`.
+        # Un ejemplo de consulta válida es el siguiente:
+        # {
+        #     "table": "usuarios",
+        #     "conditions": [
+        #         {
+        #             "prefix": "WHERE",
+        #             "operator": "=",
+        #             "column": "email",
+        #             "value": "ejemplo@correo.com"
+        #         }
+        #     ]
+        # }
+        # Lo cual produciría exactamente la siguiente consulta en sintaxis SQL:
+        # DELETE FROM usuarios WHERE email = ejemplo@correo.com;
+        # `statement` representa las variables que se van a procesar en la consulta.
+        table = parameters["table"]
+
+        statement = []
+        query: str = f"DELETE FROM {table}"
+
+        if not "conditions" in parameters:
+            return query, statement
+
+        conditions, statement = self.parseParameters(parameters["conditions"])
+
+        query += conditions
+        
+        return query, statement
+        
 
     def selectAll(self, parameters: dict) -> tuple | None:
         query, statement = self.prepareStatementSelect(parameters)
-        print(self.debug_query(query, statement))
         self.cursor.execute(query, statement)
         rows = self.cursor.fetchall()
 
@@ -152,7 +233,6 @@ class Database():
     
     def selectOne(self, parameters: dict) -> dict | None:
         query, statement = self.prepareStatementSelect(parameters)
-        print(self.debug_query(query, statement))
         self.cursor.execute(query, statement)
         row = self.cursor.fetchone()
 
@@ -160,12 +240,27 @@ class Database():
 
     def insertOne(self, parameters: list) -> int:
         query, statement = self.prepareStatementInsert(parameters)
-        print(self.debug_query(query, statement))
         self.cursor.execute(query, statement)
         self.db.commit()
         row = self.cursor.lastrowid
 
         return row
+
+    def updateRows(self, parameters: list) -> int:
+        query, statement = self.prepareStatementUpdate(parameters)
+        self.cursor.execute(query, statement)
+        self.db.commit()
+        rows = self.cursor.rowcount
+
+        return rows
+
+    def deleteRows(self, parameters: int) -> int:
+        query, statement = self.prepareStatementDelete(parameters)
+        self.cursor.execute(query, statement)
+        self.db.commit()
+        rows = self.cursor.rowcount
+
+        return rows
     
     def debug_query(self, query: str, params: list) -> str:
         q = query

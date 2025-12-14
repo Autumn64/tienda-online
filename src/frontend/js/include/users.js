@@ -26,7 +26,7 @@ async function getSession(token){
     if (!token) return null;
 
     try{
-        const response = await fetch("http://localhost:5000/api/tokens", {
+        const response = await fetch("https://storeapi.autumn64.xyz/api/tokens/", {
             method: "GET",
             headers: {
                 // El cliente debe enviar una cabecera de autorización con el formato
@@ -56,6 +56,8 @@ $("#logoutBtn").on("click", () =>{
     // Elimina toda la información de la sesión y redirecciona a la página principal.
     sessionStorage.removeItem("tienda-session")
     localStorage.removeItem("tienda-session");
+    localStorage.removeItem("tienda-cart");
+    delete window.isAdmin;
     window.location.href = "index.html";
 });
 
@@ -74,6 +76,8 @@ $(async () =>{
 
     // Si hay usuario, pero no está verificado, redirecciona a la pantalla de verificación.
     if (!user.verificado) window.location.href = "verify.html";
+
+    sessionStorage.setItem("tienda-usertype", user.type);
 
     setInterface(user);
 });
