@@ -1,5 +1,5 @@
 $(() =>{
-    fetch("https://storeapi.autumn64.xyz/api/products")
+    fetch("https://storeapi.autumn64.xyz/api/products/")
     .then(r => r.json())
     .then(response =>{
         for (element of response.data){
