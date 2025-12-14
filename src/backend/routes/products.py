@@ -157,6 +157,15 @@ def create_product():
 
     if "" in [nombre, descripcion, precio, stock]:
         return http_result(400, message="Debes llenar todos los campos.")
+    
+    try:
+        precio = float(precio)
+        stock = int(stock)
+    except:
+        return http_result(400, message="Los campos `precio` y `stock` deben ser números.")
+
+    if stock < 1:
+        return http_result(400, message="No es válido agregar un producto que no tiene stock.")
 
     imagenes: list = request.files.getlist("productPics")
     message: str | None = verify_images(imagenes)

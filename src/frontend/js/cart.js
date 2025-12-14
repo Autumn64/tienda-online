@@ -84,6 +84,8 @@ async function addProduct(id, quantity){
 function buyCart(e){
     e.preventDefault();
 
+    $("#purchaseBtn").prop("disabled", true);
+
     fetch("https://storeapi.autumn64.xyz/api/checkout/", {
         method: "POST",
         headers: {
@@ -92,7 +94,7 @@ function buyCart(e){
         },
         body: JSON.stringify({
             "cart": JSON.parse(localStorage.getItem("tienda-cart")),
-            "backurl": "http://localhost/tienda-online/cart.html"
+            "backurl": "https://store.autumn64.xyz/tienda-online/cart.html"
         })
     })
     .then(r => r.json())
@@ -102,6 +104,7 @@ function buyCart(e){
         window.location.href = response.data["url"];
     })
     .catch(error =>{
+        $("#purchaseBtn").prop("disabled", false);
         Swal.fire({
             title: "Error al realizar la compra",
             text: error,

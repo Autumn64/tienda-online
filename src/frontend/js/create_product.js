@@ -1,6 +1,13 @@
 $("#productForm").on("submit", e =>{
     e.preventDefault();
 
+    /*
+        Haciendo QA descubrimos que se podía presionar el botón varias veces,
+        lo que lleva a duplicados. Entonces deshabilitamos el botón para que 
+        ya no se pueda hacer eso.
+    */
+    $("#submitBtn").prop("disabled", true);
+
     const formData = new FormData($("#productForm").get(0));
 
     // Reemplaza los saltos de línea por <br>.
@@ -26,6 +33,7 @@ $("#productForm").on("submit", e =>{
         .then(result => window.location.href = "create_product.html");
     })
     .catch(error => {
+        $("#submitBtn").prop("disabled", false);
         Swal.fire({
             "title": "Error al agregar producto",
             "text": error,
