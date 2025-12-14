@@ -31,6 +31,17 @@ const getNewTemplate = (id, container) =>{
     return $($template.prop("content")).clone(true).find(container);
 }
 
+const addAdminProduct = ($parent, id, picture, prodName, inverse) =>{
+    const $adminProductTemplate = getNewTemplate("#adminProduct-template", ".adminProductRow");
+
+    $adminProductTemplate.find(".imgCol").find("img").attr("src", picture);
+    $adminProductTemplate.find(".nameCol").text(prodName);
+    $adminProductTemplate.find(".rmCol").find("button").attr("data-cart-id", id);
+
+    if (inverse) $parent.prepend($adminProductTemplate);
+    else $parent.append($adminProductTemplate);
+}
+
 const addPurchaseCard = ($parent, id, cost, date, inverse) => {
     const $purchaseCardTemplate = getNewTemplate("#purchase-template", ".purchase");
 

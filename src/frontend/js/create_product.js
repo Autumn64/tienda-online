@@ -39,7 +39,7 @@ $("#productForm").on("submit", e =>{
             "text": error,
             "icon": "error"
         });
-    })
+    });
 });
 
 $(() =>{

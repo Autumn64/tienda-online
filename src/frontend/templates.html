@@ -1,4 +1,12 @@
 <!DOCTYPE html>
+<template id="adminProduct-template">
+    <section class="adminProductRow container-fluid d-flex flex-column flex-sm-row flex-wrap text-center justify-content-center align-items-center py-2 border-bottom border-1">
+        <div class="imgCol"><img></div>
+        <div class="nameCol flex-grow-0 flex-shrink-1 ms-sm-5 me-sm-auto"></div>
+        <div class="rmCol"><button class="btn btn-outline-danger" data-cart-id=""><i class="material-icons">delete</i></button></div>
+    </section>
+</template>
+
 <template id="purchase-template">
     <div class="purchase container p-3 my-5 text-center border border-2 rounded-4">
         <h2 class="h2">Compra #<span class="purchaseId"></span></h2>
@@ -10,7 +18,7 @@
 
 <template id="purchaseProduct-template">
     <section class="purchaseProductRow container-fluid d-flex flex-column flex-sm-row flex-wrap text-center justify-content-center align-items-center py-3">
-        <div class="imgCol"><img></div>
+        <div class="imgCol"><img style="max-height: 50px;"></div>
         <div class="nameCol flex-grow-0 flex-shrink-1 ms-sm-5 me-sm-3"></div>
         <div>$<span class="prodPrice"></span></div>
         <div>&nbsp;&nbsp;X&nbsp;<span class="prodQty"></span></div>
