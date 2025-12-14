@@ -86,8 +86,12 @@ def complete_checkout(session):
 @webhooks.route("/", methods=["POST"])
 def stripe_webhook():
     # Webhook que recibe los eventos de Stripe.
-    payload = request.data
     sig_header = request.headers.get("Stripe-Signature")
+
+    if not sig_header or not endpoint_key:
+        return http_result(400)
+
+    payload = request.data
 
     # Esto es de mismo Stripe, y es para obtener el evento que se recibió.
     try:

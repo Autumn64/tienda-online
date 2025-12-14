@@ -14,7 +14,9 @@ STATIC_FOLDER = os.path.join(BASE_DIR, "static")
 
 app = Flask(__name__)
 # Configuración de CORS para evitar errores en el cliente.
-CORS(app, origins=["http://localhost", "https://store.autumn64.xyz"])
+CORS(app, resources={r"/api/*": {
+        "origins": ["http://localhost", "https://store.autumn64.xyz"]
+    }})
 
 # Se registra cada endpoint con su respectiva ruta. Se utiliza `Blueprint` para insertar
 # cada endpoint de manera fácil y segura, y de este modo no llenamos un mismo archivo

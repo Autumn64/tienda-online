@@ -124,7 +124,7 @@ def create_checkout_session():
         metadata={
             "user_id": str(user["id"])
         },
-        success_url="http://store.autumn64.xyz/tienda-online/purchase_success.html",
+        success_url=f"{request.environ.get('HTTP_ORIGIN', 'default value')}/purchase_success.html",
         cancel_url=data["backurl"]
     )
 
