@@ -11,7 +11,7 @@
     <script defer src="js/include/jquery-3.7.1.min.js"></script>
     <script defer src="js/include/templates.js"></script>
     <script defer src="js/include/users.js"></script>
-    <script defer src="js/admin.js"></script>
+    <script defer src="js/purchase_success.js"></script>
 </head>
 <body>
     <div id="loading-screen" class="container-fluid justify-content-center align-items-center">
@@ -59,12 +59,10 @@
     </div>
     </nav>
     </header>
-    <div class="container my-5" id="forbidden" style="display: none;">
-        No tienes permiso para visualizar esta página.
-    </div>
-    <main class="container-fluid text-center" id="adminPanel" style="display: none;">
-        <h1 class="h1 my-5">Modo administrador</h1>
-        <a href="create_product.html" class="btn btn-primary" role="button">Agregar producto</a>
+    <main class="container-fluid text-center" id="adminPanel">
+        <h1 class="h1 my-5">Compra realizada</h1>
+        Tu compra se llevó a cabo con éxito y se procesará inmediatamente.<br><br>
+        <a href="my_purchases.html">Mis compras</a>
     </main>
     </div>
 </body>

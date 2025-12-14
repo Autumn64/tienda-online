@@ -225,7 +225,6 @@ class Database():
 
     def selectAll(self, parameters: dict) -> tuple | None:
         query, statement = self.prepareStatementSelect(parameters)
-        print(self.debug_query(query, statement))
         self.cursor.execute(query, statement)
         rows = self.cursor.fetchall()
 
@@ -234,7 +233,6 @@ class Database():
     
     def selectOne(self, parameters: dict) -> dict | None:
         query, statement = self.prepareStatementSelect(parameters)
-        print(self.debug_query(query, statement))
         self.cursor.execute(query, statement)
         row = self.cursor.fetchone()
 
@@ -242,7 +240,6 @@ class Database():
 
     def insertOne(self, parameters: list) -> int:
         query, statement = self.prepareStatementInsert(parameters)
-        print(self.debug_query(query, statement))
         self.cursor.execute(query, statement)
         self.db.commit()
         row = self.cursor.lastrowid
@@ -251,7 +248,6 @@ class Database():
 
     def updateRows(self, parameters: list) -> int:
         query, statement = self.prepareStatementUpdate(parameters)
-        print(self.debug_query(query, statement))
         self.cursor.execute(query, statement)
         self.db.commit()
         rows = self.cursor.rowcount
@@ -260,7 +256,6 @@ class Database():
 
     def deleteRows(self, parameters: int) -> int:
         query, statement = self.prepareStatementDelete(parameters)
-        print(self.debug_query(query, statement))
         self.cursor.execute(query, statement)
         self.db.commit()
         rows = self.cursor.rowcount

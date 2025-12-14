@@ -32,6 +32,12 @@ def validate_token():
             "operator": "=",
             "column": "username",
             "value": token_user["username"]
+            },
+            {
+            "prefix": "AND",
+            "operator": "=",
+            "column": "eliminado",
+            "value": False
             }
         ]
     })

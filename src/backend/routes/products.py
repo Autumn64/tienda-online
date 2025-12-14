@@ -80,6 +80,7 @@ def get_product(product_id):
     # Despliega la información del producto seleccionado, junto con sus imágenes
     db = Database()
 
+    # Si el producto fue `softborrado` o si no tiene stock, no lo muestra.
     product = db.selectOne({
         "table": "productos",
         "columns": ["nombre", "precio", "descripcion", "stock"],
@@ -89,7 +90,19 @@ def get_product(product_id):
             "operator": "=",
             "column": "id",
             "value": product_id
-            }
+            },
+            {
+            "prefix": "AND",
+            "operator": ">",
+            "column": "stock",
+            "value": 0
+            },
+            {
+            "prefix": "AND",
+            "operator": "=",
+            "column": "eliminado",
+            "value": False
+            },
         ]
     })
 

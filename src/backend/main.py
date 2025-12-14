@@ -1,7 +1,6 @@
 import dotenv, os, json
 from flask_cors import CORS
 from routes.auth import auth
-from routes.users import users
 from routes.tokens import tokens
 from routes.checkout import checkout
 from routes.products import products
@@ -15,13 +14,12 @@ STATIC_FOLDER = os.path.join(BASE_DIR, "static")
 
 app = Flask(__name__)
 # Configuración de CORS para evitar errores en el cliente.
-CORS(app)
+CORS(app, origins=["http://localhost", "https://store.autumn64.xyz"])
 
 # Se registra cada endpoint con su respectiva ruta. Se utiliza `Blueprint` para insertar
 # cada endpoint de manera fácil y segura, y de este modo no llenamos un mismo archivo
 # con demasiado código.
 app.register_blueprint(auth, url_prefix="/api/auth")
-app.register_blueprint(users, url_prefix="/api/users")
 app.register_blueprint(tokens, url_prefix="/api/tokens")
 app.register_blueprint(checkout, url_prefix="/api/checkout")
 app.register_blueprint(products, url_prefix="/api/products")
@@ -41,4 +39,6 @@ def serveStatic(subpath):
 if __name__ == "__main__":
     dotenv.load_dotenv()
 
-    app.run(host="localhost", debug=True)
+    from waitress import serve
+
+    serve(app, host="127.0.0.1", port="5050")

@@ -8,3 +8,4 @@ pyjwt
 pyotp
 Werkzeug
 stripe
+waitress

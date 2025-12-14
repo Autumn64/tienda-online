@@ -30,9 +30,13 @@ def auth_user(token: str) -> dict | None:
     return user
 
 def to_stripe_amount(value: Decimal) -> int:
+    # Stripe no lee decimales, sino números enteros, de los cuales toma
+    # los últimos dos dígitos para los centavos.
     return int((value * 100).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
 
-def get_line_items(products, user):
+def get_line_items(products):
+    # Obtiene los items del carrito, y obtiene su nombre y su precio. Después,
+    # crea una lista con la información tal y como la va a leer Stripe.
     line_items: list = []
     db = Database()
     
@@ -46,6 +50,12 @@ def get_line_items(products, user):
                 "operator": "=",
                 "column": "id",
                 "value": element["id"]
+                },
+                {
+                "prefix": "AND",
+                "operator": ">",
+                "column": "stock",
+                "value": 0
                 },
                 {
                 "prefix": "AND",
@@ -68,7 +78,6 @@ def get_line_items(products, user):
                     "name": newProduct["nombre"],
                     "metadata": {
                         "product_id": element["id"],
-                        "user_id": user
                     }
                 }
             },
@@ -82,6 +91,8 @@ def get_line_items(products, user):
 
 @checkout.route("/", methods=["POST"])
 def create_checkout_session():
+    # Recibe el carrito de compras en formato JSON, y crea una sesión de Stripe
+    # para realizar el pago.
     if not request.is_json:
         return http_result(400, message="Sólo se acepta información en formato JSON.")
 
@@ -102,13 +113,18 @@ def create_checkout_session():
 
     data = request.json
 
-    line_items: list = get_line_items(data["cart"].values(), user["id"])
+    line_items: list = get_line_items(data["cart"].values())
 
+    # Esta es la sesión de stripe, cuya URL se envía al cliente para acceder a
+    # la pantalla de pago.
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
         mode="payment",
         line_items=line_items,
-        success_url="http://localhost/tienda-online",
+        metadata={
+            "user_id": str(user["id"])
+        },
+        success_url="http://store.autumn64.xyz/tienda-online/purchase_success.html",
         cancel_url=data["backurl"]
     )
 
