@@ -12,7 +12,7 @@
     <script defer src="js/include/jquery-3.7.1.min.js"></script>
     <script defer src="js/include/templates.js"></script>
     <script defer src="js/include/users.js"></script>
-    <script defer src="js/login.js"></script>
+    <script defer src="js/signup.js"></script>
 </head>
 <body>
     <header>
@@ -56,25 +56,28 @@
     </header>
 
     <main class="container my-5 justify-content-center" style="max-width: 500px;">
-        <h1 class="h1 text-center">Iniciar sesión</h1>
-        <form class="my-5" id="loginForm">
+        <h1 class="h1 text-center">Registrarse</h1>
+        <form class="my-5" id="signupForm">
         <div class="mb-3">
-            <label for="loginEmail" class="form-label">Correo electrónico</label>
-            <input type="email" class="form-control" id="loginEmail" placeholder="correo@ejemplo.com" required>
+            <label for="signupUser" class="form-label">Nombre de usuario</label>
+            <input type="text" class="form-control" id="signupUser" placeholder="usuario" required>
         </div>
         <div class="mb-3">
-            <label for="loginPassword" class="form-label">Contraseña</label>
-            <input type="password" class="form-control" id="loginPassword" placeholder="contraseña" required>
+            <label for="signupEmail" class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" id="signupEmail" placeholder="correo@ejemplo.com" required>
         </div>
-        <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="rememberMeCheck">
-            <label class="form-check-label" for="rememberMeCheck">Recuérdame</label>
+        <div class="mb-3">
+            <label for="signupPassword" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="signupPassword" placeholder="contraseña" required>
+        </div>
+        <div class="mb-3">
+            <label for="signupPassword2" class="form-label">Repite tu contraseña</label>
+            <input type="password" class="form-control" id="signupPassword2" placeholder="contraseña" required>
         </div>
         <div class="container-fluid text-center">
-            <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+            <button type="submit" class="btn btn-primary">Registrarse</button>
         </div>
         </form>
-        ¿No tienes cuenta? <a href="signup.html">Regístrate</a>
         <div id="loginSpinner" class="container-fluid text-center" style="display: none;">
             <div class="spinner-border text-primary my-auto mx-auto" style="width: 50px; height: 50px;" role="status">
             <span class="visually-hidden">Cargando...</span>
