@@ -1,4 +1,22 @@
 <!DOCTYPE html>
+<template id="purchase-template">
+    <div class="purchase container p-3 my-5 text-center border border-2 rounded-4">
+        <h2 class="h2">Compra #<span class="purchaseId"></span></h2>
+        <h4 class="h4">Fecha de compra: <span class="purchaseDate"></span></h4>
+        <h5 class="h5">Monto: $<span class="purchaseCost"></span></h5>
+        <hr>
+    </div>
+</template>
+
+<template id="purchaseProduct-template">
+    <section class="purchaseProductRow container-fluid d-flex flex-column flex-sm-row flex-wrap text-center justify-content-center align-items-center py-3">
+        <div class="imgCol"><img></div>
+        <div class="nameCol flex-grow-0 flex-shrink-1 ms-sm-5 me-sm-3"></div>
+        <div>$<span class="prodPrice"></span></div>
+        <div>&nbsp;&nbsp;X&nbsp;<span class="prodQty"></span></div>
+    </section>
+</template>
+
 <template id="cartProduct-template">
     <section class="cartProductRow container-fluid d-flex flex-column flex-sm-row flex-wrap text-center align-items-center py-2 border-bottom border-1" data-cart-id="">
         <div class="imgCol"><img></div>
