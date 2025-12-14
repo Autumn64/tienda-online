@@ -200,3 +200,39 @@ def create_product():
         })
     
     return http_result(201, message="Producto creado exitosamente.")
+
+@products.route("/<product_id>", methods=["DELETE"])
+def delete_product(product_id):
+    # Elimina el producto especificado
+    auth = request.authorization
+
+    if not auth:
+        return http_result(401, message="Se requiere especificar un token.")
+
+    token_user = decode_token(auth.token)
+
+    if not token_user:
+        return http_result(401, message="Token inválido.")
+
+    user = auth_user(token_user)
+
+    if not user:
+        return http_result(403, message="No tienes permiso para acceder a este recurso.")
+
+    db = Database()
+
+    rows = db.updateRows({
+        "table": "productos",
+        "columns": ["eliminado"],
+        "values": [True],
+        "conditions": [
+            {
+            "prefix": "WHERE",
+            "operator": "=",
+            "column": "id",
+            "value": product_id
+            }
+        ]
+    })
+
+    return http_result(200, message=f"Se eliminó {rows} producto(s).")

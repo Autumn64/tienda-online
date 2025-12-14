@@ -94,7 +94,8 @@ function buyCart(e){
         },
         body: JSON.stringify({
             "cart": JSON.parse(localStorage.getItem("tienda-cart")),
-            "backurl": "https://store.autumn64.xyz/cart.html"
+            "backurl": "https://store.autumn64.xyz/cart.html",
+            "successurl": "https://store.autumn64.xyz/purchase_success.html"
         })
     })
     .then(r => r.json())

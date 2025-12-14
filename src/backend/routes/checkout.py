@@ -124,7 +124,7 @@ def create_checkout_session():
         metadata={
             "user_id": str(user["id"])
         },
-        success_url=f"{request.environ.get('HTTP_ORIGIN', 'default value')}/purchase_success.html",
+        success_url=data["successurl"],
         cancel_url=data["backurl"]
     )
 

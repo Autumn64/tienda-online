@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS tienda_online_test;
+DROP DATABASE IF EXISTS tienda_online;
 
-CREATE DATABASE IF NOT EXISTS tienda_online_test;
-USE tienda_online_test;
+CREATE DATABASE IF NOT EXISTS tienda_online;
+USE tienda_online;
 
 -- Tabla de usuarios
 CREATE TABLE IF NOT EXISTS usuarios(
@@ -37,34 +37,6 @@ CREATE TABLE IF NOT EXISTS imagenes(
     ruta VARCHAR(255),
     
     CONSTRAINT FK_imagenes_producto_id FOREIGN KEY (producto_id) REFERENCES productos(id)
-);
-
-CREATE TABLE IF NOT EXISTS modificaciones(
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    producto_id INTEGER NOT NULL,
-    autor_id INTEGER NOT NULL,
-    
-    fecha_modificacion DATETIME,
-    razon VARCHAR(255),
-    
-    CONSTRAINT FK_modificaciones_producto_id FOREIGN KEY (producto_id) REFERENCES productos(id),
-    CONSTRAINT FK_modificaciones_autor_id FOREIGN KEY (autor_id) REFERENCES usuarios(id)
-);
-
--- Categorías
-CREATE TABLE IF NOT EXISTS categorias(
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
-    nombre VARCHAR(30),
-    descripcion VARCHAR(255)
-);
-
-CREATE TABLE IF NOT EXISTS productos_categorias(
-    producto_id INTEGER NOT NULL,
-    categoria_id INTEGER NOT NULL,
-    
-    PRIMARY KEY (producto_id, categoria_id),
-    CONSTRAINT FK_productos_categorias_producto_id FOREIGN KEY (producto_id) REFERENCES productos(id) ON DELETE CASCADE,
-    CONSTRAINT FK_productos_categorias_categoria_id FOREIGN KEY (categoria_id) REFERENCES categorias(id) ON DELETE CASCADE
 );
 
 -- Transacciones y compras
@@ -106,3 +78,21 @@ LEFT JOIN imagenes i
 WHERE 
     p.stock > 0
     AND p.eliminado = 0;
+
+-- Vista para mostrar una compra con todos sus productos y cantidades.
+CREATE OR REPLACE VIEW productos_compras AS
+SELECT
+    t.compra_id,
+    p.nombre,
+    p.precio,
+    t.cantidad,
+    i.ruta AS imagen
+    FROM productos p
+    INNER JOIN transacciones t
+        ON p.id = t.producto_id
+    LEFT JOIN imagenes i 
+    ON i.id = (
+        SELECT MIN(id)
+        FROM imagenes
+        WHERE producto_id = p.id
+    );

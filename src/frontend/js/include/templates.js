@@ -31,6 +31,39 @@ const getNewTemplate = (id, container) =>{
     return $($template.prop("content")).clone(true).find(container);
 }
 
+const addAdminProduct = ($parent, id, picture, prodName, inverse) =>{
+    const $adminProductTemplate = getNewTemplate("#adminProduct-template", ".adminProductRow");
+
+    $adminProductTemplate.find(".imgCol").find("img").attr("src", picture);
+    $adminProductTemplate.find(".nameCol").text(prodName);
+    $adminProductTemplate.find(".rmCol").find("button").attr("data-cart-id", id);
+
+    if (inverse) $parent.prepend($adminProductTemplate);
+    else $parent.append($adminProductTemplate);
+}
+
+const addPurchaseCard = ($parent, id, cost, date, inverse) => {
+    const $purchaseCardTemplate = getNewTemplate("#purchase-template", ".purchase");
+
+    $purchaseCardTemplate.find(".purchaseId").text(id);
+    $purchaseCardTemplate.find(".purchaseCost").text(cost);
+    $purchaseCardTemplate.find(".purchaseDate").text(date);
+
+    if (inverse) $parent.prepend($purchaseCardTemplate);
+    else $parent.append($purchaseCardTemplate)
+}
+
+const addPurchaseProduct = ($parent, picture, prodName, price, qty) =>{
+    const $purchaseProductTemplate = getNewTemplate("#purchaseProduct-template", ".purchaseProductRow");
+
+    $purchaseProductTemplate.find(".imgCol").find("img").attr("src", picture);
+    $purchaseProductTemplate.find(".nameCol").text(prodName);
+    $purchaseProductTemplate.find(".prodPrice").text(price);
+    $purchaseProductTemplate.find(".prodQty").text(qty);
+
+    $parent.append($purchaseProductTemplate);
+}
+
 const addCartProduct = ($parent, id, picture, prodName, max, qty, price) =>{
     const $cartProductTemplate = getNewTemplate("#cartProduct-template", ".cartProductRow");
 

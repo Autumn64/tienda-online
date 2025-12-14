@@ -30,7 +30,7 @@ $("#productForm").on("submit", e =>{
             "text": response.message,
             "icon": "success"
         })
-        .then(result => window.location.href = "create_product.html");
+        .then(() => window.location.href = "admin.html");
     })
     .catch(error => {
         $("#submitBtn").prop("disabled", false);
@@ -39,7 +39,7 @@ $("#productForm").on("submit", e =>{
             "text": error,
             "icon": "error"
         });
-    })
+    });
 });
 
 $(() =>{

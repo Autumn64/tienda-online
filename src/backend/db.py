@@ -225,6 +225,7 @@ class Database():
 
     def selectAll(self, parameters: dict) -> tuple | None:
         query, statement = self.prepareStatementSelect(parameters)
+        print(self.debug_query(query, statement))
         self.cursor.execute(query, statement)
         rows = self.cursor.fetchall()
 
