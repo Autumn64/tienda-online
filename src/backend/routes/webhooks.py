@@ -81,7 +81,7 @@ def complete_checkout(session):
     
     db.disconnect()
 
-    return http_result(200)
+    return http_result(201)
 
 @webhooks.route("/", methods=["POST"])
 def stripe_webhook():

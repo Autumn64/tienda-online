@@ -106,3 +106,20 @@ LEFT JOIN imagenes i
 WHERE 
     p.stock > 0
     AND p.eliminado = 0;
+
+CREATE OR REPLACE VIEW productos_compras AS
+SELECT
+    t.compra_id,
+    p.nombre,
+    p.precio,
+    t.cantidad,
+    i.ruta AS imagen
+    FROM productos p
+    INNER JOIN transacciones t
+        ON p.id = t.producto_id
+    LEFT JOIN imagenes i 
+    ON i.id = (
+        SELECT MIN(id)
+        FROM imagenes
+        WHERE producto_id = p.id
+    );
