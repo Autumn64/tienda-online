@@ -31,8 +31,8 @@ body {
 }
 
 .carousel-inner img{
-    filter: brightness(70%);
-    height: 400px; 
+    filter: brightness(90%);
+    height: 500px; 
     object-fit: cover;
     object-position: center;
 }
@@ -44,4 +44,11 @@ body {
 
 #main-container {
     display: none;
+}
+
+@media screen and (width <= 750px){
+    .carousel-inner img{
+        height: auto;
+        object-fit: contain;
+    }
 }
