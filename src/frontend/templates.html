@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<template id="adminProduct-template">
+    <section class="adminProductRow container-fluid d-flex flex-column flex-sm-row flex-wrap text-center justify-content-center align-items-center py-2 border-bottom border-1">
+        <div class="imgCol"><img></div>
+        <div class="nameCol flex-grow-0 flex-shrink-1 ms-sm-5 me-sm-auto"></div>
+        <div class="rmCol"><button class="btn btn-outline-danger" data-cart-id=""><i class="material-icons">delete</i></button></div>
+    </section>
+</template>
+
+<template id="purchase-template">
+    <div class="purchase container p-3 my-5 text-center border border-2 rounded-4">
+        <h2 class="h2">Compra #<span class="purchaseId"></span></h2>
+        <h4 class="h4">Fecha de compra: <span class="purchaseDate"></span></h4>
+        <h5 class="h5">Monto: $<span class="purchaseCost"></span></h5>
+        <hr>
+    </div>
+</template>
+
+<template id="purchaseProduct-template">
+    <section class="purchaseProductRow container-fluid d-flex flex-column flex-sm-row flex-wrap text-center justify-content-center align-items-center py-3">
+        <div class="imgCol"><img style="max-height: 50px;"></div>
+        <div class="nameCol flex-grow-0 flex-shrink-1 ms-sm-5 me-sm-3"></div>
+        <div>$<span class="prodPrice"></span></div>
+        <div>&nbsp;&nbsp;X&nbsp;<span class="prodQty"></span></div>
+    </section>
+</template>
+
+<template id="cartProduct-template">
+    <section class="cartProductRow container-fluid d-flex flex-column flex-sm-row flex-wrap text-center align-items-center py-2 border-bottom border-1" data-cart-id="">
+        <div class="imgCol"><img></div>
+        <div class="nameCol flex-grow-0 flex-shrink-1 ms-sm-5 me-sm-3"></div>
+        <section class="container-flex my-2 my-sm-0 ms-sm-auto me-sm-5 d-flex flex-row gap-1 align-items-center">
+            <div>$<span class="uProdPrice"></span>&nbsp;&nbsp;X</div>
+            <div class="qtyCol"><input type="number" value="1" min="1" class="form-control ms-auto ms-md-0 me-2" data-cart-id=""></div>
+            <div>= $<span class="totalProdPrice"></span></div>
+        </section>
+        <div class="rmCol"><button class="btn btn-outline-danger" data-cart-id=""><i class="material-icons">delete</i></button></div>
+    </section>
+</template>
+
+<template id="productCard-template">
+    <div class="pcard card m-3 text-center" style="width: 18rem;">
+        <img src="#" class="pcard-img card-img-top">
+        <div class="card-body">
+            <h3 class="h3 pcard-name card-title"></h3>
+            <h2 class="h2 pcard-price card-text"></h2>
+            <a href="#" class="pcard-btn btn btn-primary">Ver producto</a>
+        </div>
+    </div>
+</template>
+
+<template id="carouselImg-template">
+    <div class="carousel-item" data-bs-interval="7000">
+        <a href="#" target="_blank"><img class="d-block w-100"></a>
+    </div>
+</template>
+
+<template id="errorMsg">
+    <div class="alert alert-danger" role="alert" style="display: none;"></div>
+</template>
+
+<template id="successMsg">
+    <div class="alert alert-success" role="alert" style="display: none;"></div>
+</template>
+
+<template id="infoMsg">
+    <div class="alert alert-info" role="alert" style="display: none;"></div>
+</template>

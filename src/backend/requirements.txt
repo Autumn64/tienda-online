@@ -1,0 +1,11 @@
+bcrypt
+dotenv
+flask
+flask-cors
+mysql-connector-python
+requests
+pyjwt
+pyotp
+Werkzeug
+stripe
+waitress
